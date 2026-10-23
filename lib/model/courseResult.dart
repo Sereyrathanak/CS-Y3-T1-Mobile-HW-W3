@@ -1,6 +1,7 @@
+// import '../model/courseResult.dart';
 
 class CourseResult{
-    final int id;
+    final int id; 
     final String studentId; 
     final String courseId;
     final int score; 
