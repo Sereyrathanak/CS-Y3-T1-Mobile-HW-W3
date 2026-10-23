@@ -1,6 +1,5 @@
 // import 'dart:io';
-
-import 'dart:math';
+// import 'dart:math';
 
 import '../model/course.dart';
 import '../model/courseResult.dart';
@@ -137,6 +136,22 @@ class LmsSystem {
     }
 
     results.add(CourseResult(id: nextResultId, studentId: studentId, courseId: courseId, score: score)); 
+  }
+
+  void removeResult({required int resultId}){
+    CourseResult? foundResult; 
+    for (CourseResult result in results){
+      if (result.id == resultId){
+        foundResult = result; 
+        break; 
+      }
+    }
+
+    if (foundResult == null){
+      throw Exception("Result $resultId notfound"); 
+    }
+
+    results.remove(foundResult); 
   }
 
 

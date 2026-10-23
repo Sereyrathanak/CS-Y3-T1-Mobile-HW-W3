@@ -263,6 +263,88 @@ void main() {
     );
 
     expect(lms.results.length, 0);
-});
+  });
+
+  test('Remove an existing result', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S01',studentName: 'ronan',);
+    lms.addCourse(courseId: 'C01',courseName: 'Mobile Development',);
+    lms.enrollStudent(studentId: 'S01',courseId: 'C01',);
+    lms.addResult(studentId: 'S01',courseId: 'C01',score: 85,);
+
+    int resultId = lms.results.first.id;
+    lms.removeResult(resultId: resultId);
+    expect(lms.results.length, 0);
+  });
+
+  test('Reject removal of a nonexistent result', () {
+    final lms = LmsSystem();
+
+    expect(
+      () => lms.removeResult(resultId: 999),
+      throwsException,
+    );
+
+    expect(lms.results.length, 0);
+  });
+
+  test('Removed result is no longer available', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S01',studentName: 'ronan',);
+    lms.addCourse(courseId: 'C01',courseName: 'Mobile Development',);
+    lms.enrollStudent(studentId: 'S01',courseId: 'C01',);
+    lms.addResult(studentId: 'S01',courseId: 'C01',score: 85, );
+
+    int resultId = lms.results.first.id;
+    lms.removeResult(resultId: resultId);
+
+    expect(
+      lms.results.any(
+        (result) => result.id == resultId,),
+      false,
+    );
+  });
+
+  test('Removing a result keeps unrelated data', () {
+    final lms = LmsSystem();
+
+    lms.addStudent(studentId: 'S01',studentName: 'ronan',);
+    lms.addStudent(studentId: 'S02',studentName: 'dara',);
+    lms.addCourse(courseId: 'C01',courseName: 'Mobile Development',);
+    lms.enrollStudent(studentId: 'S01',courseId: 'C01',);
+    lms.enrollStudent(studentId: 'S02',courseId: 'C01',);
+    lms.addResult(studentId: 'S01',courseId: 'C01',score: 85,);
+    lms.addResult(studentId: 'S02',courseId: 'C01',score: 90,);
+
+    int resultId = lms.results.first.id;
+
+    lms.removeResult(resultId: resultId);
+
+    expect(lms.results.length, 1);
+    expect(lms.results.first.studentId, 'S02');
+    expect(lms.results.first.score, 90);
+
+
+    expect(lms.students.length, 2);
+    expect(lms.students.first.id, 'S01');
+    expect(lms.students.last.id, 'S02');
+
+
+    expect(lms.courses.length, 1);
+    expect(lms.courses.first.id, 'C01');
+
+
+    expect(
+      lms.courses.first.studentIds.contains('S01'),
+      true,
+    );
+
+    expect(
+      lms.courses.first.studentIds.contains('S02'),
+      true,
+    );
+  });
 
  }
